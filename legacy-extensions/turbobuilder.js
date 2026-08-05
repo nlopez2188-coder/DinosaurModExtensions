@@ -260,24 +260,7 @@
                         type: Scratch.ArgumentType.EMPTY,
                       },
                     },
-                  },/*
-                  {
-                    opcode: 'TurboBuilder_addFunctionality',
-                    func: 'addFunctionality',
-                    text: 'add function [FUNCTIONALITY] / BlockID [BLOCKID]',
-                    blockType: Scratch.BlockType.COMMAND,
-                    hideFromPalette: false,
-                    arguments: {
-                      FUNCTIONALITY: {
-                        type: Scratch.ArgumentType.STRING,
-                        defaultValue: 'return true;',
-                      },
-                      BLOCKID: {
-                        type: Scratch.ArgumentType.STRING,
-                        defaultValue: 'ID'
-                      },
-                    },
-                  },*/
+                  },
                   {
                     opcode: 'TurboBuilder_addInput',
                     func: 'addInput',
@@ -414,13 +397,13 @@
         localStorage.setItem("SAVE-EXT-" + "LatestInputText", 'Blank');
       }
       Setup(args, util) {
-        this._Clear()
+        this._Clear();
         const ID = args.ID;
         const ExtName = args.NAME;
         const color1 = args.COLOR1;
-        localStorage.setItem("SAVE-EXT-" + "ID", ID)
-        localStorage.setItem("SAVE-EXT-" + "ExtName", ExtName)
-        localStorage.setItem("SAVE-EXT-" + "color1", color1)
+        localStorage.setItem("SAVE-EXT-" + "ID", ID);
+        localStorage.setItem("SAVE-EXT-" + "ExtName", ExtName);
+        localStorage.setItem("SAVE-EXT-" + "color1", color1);
         const Script = `(async function(Scratch) {
           const variables = {};
           const blocks = [];
@@ -437,16 +420,15 @@
               }   
       }
       `;
-      localStorage.setItem("SAVE-EXT-" + "JS", Script)
-        
+        localStorage.setItem("SAVE-EXT-" + "JS", Script);
       }
-      JScode(args, util){
+      JScode(args, util) {
         return localStorage.getItem("SAVE-EXT-" + "JS") + `Scratch.extensions.register(new Extension());
-})(Scratch);`
+})(Scratch);`;
       }
       JScodeClipboard() {
         let JScode = localStorage.getItem("SAVE-EXT-" + "JS") + `Scratch.extensions.register(new Extension());
-      })(Scratch);`
+})(Scratch);`;
         navigator.clipboard.writeText(JScode);
       }
       createblock(args, util) {
@@ -465,42 +447,40 @@
         ${Function}
       };
       `;
-      const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
-      localStorage.setItem("SAVE-EXT-" + "JS", LocalStorage_JS + Script);
+        const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
+        localStorage.setItem("SAVE-EXT-" + "JS", LocalStorage_JS + Script);
       }
-      addFunctionality(args, util){
+      addFunctionality(args, util) {
         let LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
         let BlockID = args.BLOCKID;
         let Function = args.FUNCTIONALITY;
-        let [ firstPart, middlePart, secondPart ] = this._splitByTwo(LocalStorage_JS, `Extension.prototype['${BlockID}'] = (args, util) => {
-          `, `};`)
-        let AfterMath = (firstPart + Function + secondPart)
+        let [firstPart, middlePart, secondPart] = this._splitByTwo(LocalStorage_JS, `Extension.prototype['${BlockID}'] = (args, util) => {
+          `, `};`);
+        let AfterMath = (firstPart + Function + secondPart);
         localStorage.setItem("SAVE-EXT-" + "JS", AfterMath);
       }
       addInput(args, util) {
-        /*
-        let Script1 = `"${LatestInputID}": {
-            type: Scratch.ArgumentType.${LatestInputArgument},
-            defaultValue: '${LatestInputText}',
-          },
-        `;*/
-        const BlockID = args.BlockID
-        const InputID = args.ID
-        const InputArgument = args.ARGUMENU
-        const InputTEXT = args.TEXT
+        const BlockID = args.BlockID;
+        const InputID = args.ID;
+        const InputArgument = args.ARGUMENU;
+        const InputTEXT = args.TEXT;
         const Script = `"${InputID}": {
           type: Scratch.ArgumentType.${InputArgument},
           defaultValue: '${InputTEXT}',
         }`;
         const Part1 = `opcode: '${BlockID}',
-        arguments: {`
+        arguments: {`;
         const Part2 = `}
       });
-      Extension`
-        const [ firstPart, middlePart, secondPart ] = this._splitByTwo(LocalStorage_JS, Part1, Part2)
-        const AfterMath = (firstPart + Script + secondPart)
+      Extension`;
         const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
-        localStorage.setItem("SAVE-EXT-" + "JS", AfterMath);
+        const splitResult = this._splitByTwo(LocalStorage_JS, Part1, Part2);
+        if (Array.isArray(splitResult)) {
+          const [firstPart, middlePart, secondPart] = splitResult;
+          const separator = middlePart.includes(Part1) && !middlePart.endsWith('{') ? ', ' : '';
+          const AfterMath = firstPart + middlePart + separator + Script + secondPart;
+          localStorage.setItem("SAVE-EXT-" + "JS", AfterMath);
+        }
       }
       functionid(args, util) {
         const FunctionID = args.ID;
@@ -510,104 +490,98 @@
           ${FunctionScript}
         }
       `;
-      const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
-      localStorage.setItem("SAVE-EXT-" + "JS", LocalStorage_JS + Script);
+        const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
+        localStorage.setItem("SAVE-EXT-" + "JS", LocalStorage_JS + Script);
       }
-      EverySecDo(args, util){
-
+      EverySecDo(args, util) {
         const Numeric = args.NUM;
         const Command = args.TEXT;
 
         const Script = `setInterval(async () => {
           ${Command}
         }, (${Numeric} * 1000));\n`;
-      const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
-      localStorage.setItem("SAVE-EXT-" + "JS", LocalStorage_JS + Script);
+        const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
+        localStorage.setItem("SAVE-EXT-" + "JS", LocalStorage_JS + Script);
       }
-      InSecDo(args, util){
+      InSecDo(args, util) {
         const Numeric = args.NUM;
         const Command = args.TEXT;
         return (`setTimeout(async () => {
           ${Command}
-        }, (${Numeric} * 1000))\n`)
+        }, (${Numeric} * 1000))\n`);
       }
-      WaitForMS(args, util){
+      WaitForMS(args, util) {
         const Numeric = args.NUM;
-        return (`await new Promise(resolve => setTimeout(resolve, ${Numeric}))\n`)
+        return (`await new Promise(resolve => setTimeout(resolve, ${Numeric}))\n`);
       }
-      WaitUntil(args, util){
+      WaitUntil(args, util) {
         const BOOLEAN = args.NUM;
         return (`await new Promise(resolve => {
           let x = setInterval(() => {
               if (${BOOLEAN}) {
                   clearInterval(x);
-                  resolve()
+                  resolve();
               }
-          }, 50)
-      })\n`)
+          }, 50);
+      })\n`);
       }
-      RawStringBlock(args, util){
+      RawStringBlock(args, util) {
         const Command = args.TEXT;
         const Script = `${Command};\n`;
         const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
         localStorage.setItem("SAVE-EXT-" + "JS", LocalStorage_JS + Script);
       }
-      RawString(args, util){
-        return args.TEXT
+      RawString(args, util) {
+        return args.TEXT;
       }
-      returnValue(args, util){
-        return ("return " + args.TEXT + ";\n")
+      returnValue(args, util) {
+        return ("return " + args.TEXT + ";\n");
       }
-      String(args, util){
-        return ("\'" + args.TEXT + "\'")
+      String(args, util) {
+        return ("\'" + args.TEXT + "\'");
       }
-      Number(args, util){
-        return args.NUMBER
+      Number(args, util) {
+        return args.NUMBER;
       }
-      CallID(args, util){
-        return args.ID + "()\n"
+      CallID(args, util) {
+        return args.ID + "()\n";
       }
-      CallIDBlock(args, util){
+      CallIDBlock(args, util) {
         const Command = args.ID;
         const Script = `${Command}();\n`;
         const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
         localStorage.setItem("SAVE-EXT-" + "JS", LocalStorage_JS + Script);
       }
-      KeyPressedBlock(args, util){
+      KeyPressedBlock(args, util) {
         const Key = args.KEY;
         const Command = args.TEXT;
         const Script = `document.addEventListener("keypress", event => {
           if (event.key == '${Key}') { ${Command} }
-      })\n`
+      })\n`;
         const LocalStorage_JS = localStorage.getItem("SAVE-EXT-" + "JS");
         localStorage.setItem("SAVE-EXT-" + "JS", LocalStorage_JS + Script);
       }
-      KeyPressed(args, util){
+      KeyPressed(args, util) {
         const Key = args.KEY;
         const Script = `document.addEventListener("keypress", event => {
           if (event.key == '${Key}') { return true; } else { return false; }
-      })\n`
-        return Script
+      })\n`;
+        return Script;
       }
       _splitByTwo(input, splitValue1, splitValue2) {
-        // Find the indices of the split values in the input
         let splitIndex1 = input.indexOf(splitValue1);
         let splitIndex2 = input.indexOf(splitValue2);
     
-        // Check if both split values are found in the input
         if (splitIndex1 !== -1 && splitIndex2 !== -1) {
-            // Determine the starting and ending indices for the split
             let startIndex = Math.min(splitIndex1, splitIndex2);
             let endIndex = Math.max(splitIndex1 + String(splitValue1).length, splitIndex2 + String(splitValue2).length);
     
-            // Split the input into two parts based on the specified values
             let firstPart = input.slice(0, startIndex);
             let middlePart = input.slice(startIndex, endIndex);
             let secondPart = input.slice(endIndex);
     
             return [firstPart, middlePart, secondPart];
         } else {
-            // Handle case where one or both split values are not found
             return "One or both split values not found in the input.";
         }
       }
